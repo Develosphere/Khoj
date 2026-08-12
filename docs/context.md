@@ -129,11 +129,12 @@ The project must follow these rules:
 
 ## Current Build State
 
-**Last Updated:** 2024-06-08 PKT
+**Last Updated:** 2024-06-09 14:40 PKT
 
-- Project foundation scaffolded with all required stack, directories, and minimal CORS/health endpoint.
-- Backend Supabase client initialization and JWT/MFA security dependencies are implemented using environment-loaded Supabase settings only.
-- No business logic implemented yet (per hackathon rules).
+- Source Collection Engine (Module 3.1) implemented: modular async service, type-safe Source model/schema, DuckDuckGo provider, deduplication/normalization/filtering, /api/v1/investigations/sources endpoint.
+- Evidence Extraction Engine (Module 3.2) implemented: async modular service, type-safe Evidence model/schema (claim/source/confidence/evidence_type/reasoning), Gemini Flash Lite integration, claim deduplication/categorization, strict output validation, defensive error handling.
+- Timeline Engine (Module 3.3) implemented: modular service generates timeline events from evidence, type-safe TimelineEvent model/schema (time/event/confidence/supporting_evidence), merges duplicates, references supporting evidence, orders chronologically, robust output validation, /api/v1/investigations/timeline/generate endpoint.
+- Theory Engine (Module 3.4) implemented: modular async service generates ≥3 competing theories from evidence + timeline, type-safe Theory model/schema (theory/confidence/supporting_evidence/timeline_events/summary), deduplication, strict validation, robust error handling, Gemini Flash Lite integration, /api/v1/investigations/theories/generate endpoint.
 
 ## Compliance / Milestone Ledger
 
@@ -161,7 +162,7 @@ Never fabricate timestamps or completed milestones.
 
 ## Next Task
 
-Implement Authentication (sign-up, sign-in, Supabase sessions, 2FA) module foundation.
+Design and implementation of the Reconstruction Engine (Module 7), building on the completed investigation pipeline (sources → evidence → timeline → theories → summary). Do not begin implementation until a dedicated module specification is provided.
 
 ---
 
@@ -220,3 +221,19 @@ All credentials are loaded dynamically from the `.env` file with validation and 
 - Added environment-backed `BACKEND_CORS_ORIGINS` configuration using `pydantic-settings`.
 - Configured FastAPI `CORSMiddleware` in `backend/app/main.py` with origins loaded from `backend/.env`.
 - Added `backend/tests/test_auth.py` covering missing authorization headers and mocked valid Supabase token access to `/api/v1/auth/me`.
+
+## Summary Engine Implementation (Module 3.5)
+
+- Implemented summary generation as an async service in `backend/app/services/summary_engine.py`.
+- Added `Summary` domain model (`backend/app/models/summary.py`) and `SummarySchema` API schema (`backend/app/schemas/summary.py`).
+- Uses Gemini Flash Lite via `GeminiClient` with a dedicated prompt in `backend/app/ai/prompts/summary_prompt.py`.
+- Validates and defensively parses JSON output, returning `422` from the API when the model response is malformed or invalid.
+- FastAPI endpoint `/api/v1/investigations/summary/generate` requires authentication via `Depends(get_current_user)`.
+
+## Investigation Orchestrator Implementation (Module 3.6)
+
+- Implemented `InvestigationOrchestrator` service in `backend/app/services/investigation_orchestrator.py`.
+- Pipeline stages: source collection → evidence extraction → timeline generation → theory generation → summary generation.
+- Reuses existing engines without duplicating logic and returns a unified investigation object containing case name, sources, evidence, timeline, theories, and summary.
+- Handles failures gracefully by logging errors (with optional user id) and returning partial results with empty downstream outputs.
+- FastAPI endpoint `/api/v1/investigations/run` requires authentication via `Depends(get_current_user)` and passes the authenticated user id into orchestrator logs where available.

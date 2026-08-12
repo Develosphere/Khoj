@@ -12,7 +12,7 @@ class GeminiClient:
         self.base_url = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
         self.logger = logging.getLogger(__name__)
 
-    async def complete(self, prompt: str) -> str:
+    async def complete(self, prompt: str, **_: object) -> str:
         """
         Sends a prompt to Gemini Flash Lite, returns response as string.
         (This implementation is a stub; replace with actual API call.)

@@ -1,16 +1,24 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
+from typing import List, Any
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.core.security import get_current_user
 from app.schemas.evidence import EvidenceSchema
-from app.schemas.timeline import TimelineListResponse, TimelineEventSchema
+from app.schemas.timeline import TimelineListResponse
 from app.services.timeline_engine import TimelineEngine
 
 router = APIRouter()
 engine = TimelineEngine()
 
+
 @router.post("/timeline/generate", response_model=TimelineListResponse)
-def generate_timeline(evidence: List[EvidenceSchema]):
-    """
-    Generate a timeline from a list of evidence objects.
+async def generate_timeline(
+    evidence: List[EvidenceSchema],
+    user: Any = Depends(get_current_user),
+):
+    """Generate a timeline from a list of evidence objects.
+
+    Requires Supabase-authenticated user.
     """
     try:
         timeline = engine.extract_timeline(evidence)
