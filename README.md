@@ -197,42 +197,32 @@ cd khoj
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run build
 ```
 
 ### Backend
 
 ```bash
 cd backend
-
-python -m venv venv
-```
-
-Activate the virtual environment.
-
-**Windows**
-
-```bash
-venv\Scripts\activate
-```
-
-**macOS / Linux**
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
-
-Start FastAPI:
-
-```bash
 uvicorn app.main:app --reload
 ```
+
+- Copy `.env.example` to `.env` and fill in secrets.
+- Requires running Supabase project (see Supabase docs).
+
+### Docker Compose
+
+```bash
+docker-compose up --build
+```
+
+### Health Check
+
+FastAPI backend exposes `/health` for readiness probes.
+
+---
+See `/docs/context.md` for stack, compliance, and milestone ledger.
 
 ---
 

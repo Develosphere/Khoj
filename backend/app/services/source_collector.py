@@ -1,0 +1,1 @@
+# Source Collector service stub

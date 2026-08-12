@@ -1,0 +1,1 @@
+// Evidence type definition stub
