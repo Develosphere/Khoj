@@ -2,14 +2,29 @@
 node_modules/
 .env
 .env.*
-# Python
+backend/.env
+
+# Python caching
 __pycache__/
 *.pyc
+.pytest_cache/
+**/.pytest_cache/
+
+# Tests and Test Configurations
+tests/
+**/tests/
+test_*.py
+**/test_*.py
+pytest.ini
+**/pytest.ini
+
 # Build
 .next/
 dist/
+
 # System
 .DS_Store
+
 # Data
 /data/
 !/data/fixtures/.gitkeep

@@ -37,7 +37,7 @@ class Settings(BaseSettings):
         env_file=Path(__file__).resolve().parents[2] / ".env",
         env_file_encoding="utf-8",
         validate_assignment=True,
-        extra="forbid",
+        extra="ignore",
     )
 
 
