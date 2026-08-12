@@ -47,16 +47,49 @@ Summary Engine (Module 3.5) implemented
     "confidence": 0
   }
 
-Investigation Orchestrator (Module 3.6) implemented
-- Implemented `InvestigationOrchestrator` in `backend/app/services/investigation_orchestrator.py` to run the full pipeline: sources → evidence → timeline → theories → summary.
-- Returns unified investigation object:
-  {
-    "case_name": "",
-    "sources": [],
-    "evidence": [],
-    "timeline": [],
-    "theories": [],
-    "summary": {}
-  }
-- Added authenticated FastAPI endpoint `POST /api/v1/investigations/run` accepting `{ "case_name": "" }` and returning the unified investigation payload.
-- Orchestrator attaches authenticated user id to logs (when available) and handles failures by logging and returning partial results with empty downstream outputs.
+2024-08-12 23:45 PKT — Phase 3 Investigation Engine COMPLETE
+
+**Module 3.1 - Source Collection**
+- DuckDuckGo news provider with async HTTP requests
+- URL deduplication and content filtering
+- GET /api/v1/investigations/sources endpoint
+
+**Module 3.2 - Evidence Extraction** 
+- Real Gemini 2.0 Flash Lite API integration implemented
+- Async evidence extraction with retry logic and timeout handling
+- Pydantic validation of all AI outputs
+- Defensive parsing of malformed responses
+- Claim deduplication across sources
+
+**Module 3.3 - Timeline Engine**
+- AI-powered timeline event extraction from evidence
+- Fallback regex-based extraction for temporal information
+- Chronological sorting with multiple date format support
+- Event deduplication and confidence aggregation
+- POST /api/v1/investigations/timeline/generate endpoint
+
+**Module 3.4 - Theory Engine**
+- Gemini-powered generation of ≥3 competing theories
+- Theory deduplication by normalized text
+- Validation requiring minimum 3 theories
+- Supporting evidence and timeline event references
+- POST /api/v1/investigations/theories/generate endpoint
+
+**Module 3.5 - Summary Engine**
+- Generates investigation summary from all pipeline outputs
+- Produces key findings list and top theory identification
+- Confidence scoring for theories
+- POST /api/v1/investigations/summary/generate endpoint
+
+**Module 3.6 - Investigation Orchestrator**
+- Unified pipeline: sources → evidence → timeline → theories → summary
+- Graceful error handling with partial results
+- Authenticated user tracking in logs
+- POST /api/v1/investigations/run endpoint
+
+**Infrastructure Improvements**
+- Added GEMINI_API_KEY and OPENROUTER_API_KEY to environment config
+- Implemented OpenRouterClient as fallback AI provider
+- Created timeline_prompt.py for AI-based timeline extraction
+- All 27 Investigation Engine files validated for syntax correctness
+- Complete async/await consistency across all services

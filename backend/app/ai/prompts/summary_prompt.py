@@ -10,12 +10,12 @@ Your job is to produce a concise but comprehensive investigation summary.
 
 You MUST output a single JSON object with exactly these fields:
 
-{
+{{
   "summary": "",
   "key_findings": [],
   "top_theory": "",
   "confidence": 0.0
-}
+}}
 
 Field requirements:
 - summary: 3-6 sentence natural-language overview of the case and what is known.

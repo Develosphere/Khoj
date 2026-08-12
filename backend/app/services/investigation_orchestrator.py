@@ -87,7 +87,7 @@ class InvestigationOrchestrator:
 
         # 3. Timeline generation
         try:
-            timeline_events: List[TimelineEventSchema] = self.timeline_engine.extract_timeline(evidence_items)
+            timeline_events: List[TimelineEventSchema] = await self.timeline_engine.extract_timeline_async(evidence_items)
             investigation["timeline"] = [t.dict() for t in timeline_events]
         except Exception as exc:
             logger.exception(

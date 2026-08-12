@@ -15,13 +15,13 @@ Rules:
 - Only output a JSON list of objects in this format:
 
 [
-  {
+  {{
     "theory": "",
     "confidence": 0.0,
     "supporting_evidence": ["claim_1", "claim_5"],
     "timeline_events": ["event_2", "event_4"],
     "summary": ""
-  }
+  }}
 ]
 
 Inputs:

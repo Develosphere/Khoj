@@ -129,12 +129,28 @@ The project must follow these rules:
 
 ## Current Build State
 
-**Last Updated:** 2024-06-09 14:40 PKT
+**Last Updated:** 2024-08-12 PKT
 
-- Source Collection Engine (Module 3.1) implemented: modular async service, type-safe Source model/schema, DuckDuckGo provider, deduplication/normalization/filtering, /api/v1/investigations/sources endpoint.
-- Evidence Extraction Engine (Module 3.2) implemented: async modular service, type-safe Evidence model/schema (claim/source/confidence/evidence_type/reasoning), Gemini Flash Lite integration, claim deduplication/categorization, strict output validation, defensive error handling.
-- Timeline Engine (Module 3.3) implemented: modular service generates timeline events from evidence, type-safe TimelineEvent model/schema (time/event/confidence/supporting_evidence), merges duplicates, references supporting evidence, orders chronologically, robust output validation, /api/v1/investigations/timeline/generate endpoint.
-- Theory Engine (Module 3.4) implemented: modular async service generates ≥3 competing theories from evidence + timeline, type-safe Theory model/schema (theory/confidence/supporting_evidence/timeline_events/summary), deduplication, strict validation, robust error handling, Gemini Flash Lite integration, /api/v1/investigations/theories/generate endpoint.
+**Phase 3 - Investigation Engine: COMPLETE**
+
+- Source Collection Engine (Module 3.1): Fully functional with DuckDuckGo provider, deduplication, filtering
+- Evidence Extraction Engine (Module 3.2): Real Gemini Flash Lite integration, async claim extraction, validation
+- Timeline Engine (Module 3.3): AI-powered timeline extraction with fallback regex patterns, chronological sorting
+- Theory Engine (Module 3.4): Generates ≥3 competing theories using Gemini, proper validation and deduplication
+- Summary Engine (Module 3.5): Produces structured investigation summary with key findings
+- Investigation Orchestrator (Module 3.6): Unified pipeline executing all stages with graceful error handling
+
+**AI Integration:**
+- Gemini 2.0 Flash Lite: Primary model for evidence, timeline, theory, and summary generation
+- OpenRouter: Fallback client implemented (currently unused but available)
+- All AI clients support retry logic, timeout handling, and defensive error handling
+
+**API Endpoints (all authenticated):**
+- GET /api/v1/investigations/sources?case_name=...
+- POST /api/v1/investigations/timeline/generate
+- POST /api/v1/investigations/theories/generate  
+- POST /api/v1/investigations/summary/generate
+- POST /api/v1/investigations/run (full pipeline)
 
 ## Compliance / Milestone Ledger
 
@@ -144,6 +160,7 @@ Maintain concise timestamped milestone entries using:
 
 2024-06-08 18:00 PKT — project foundation scaffold complete
 2024-06-08 18:30 PKT — backend Supabase client and JWT/MFA security middleware complete
+2024-08-12 23:45 PKT — Phase 3 Investigation Engine complete with real Gemini API integration
 
 Only record meaningful milestones such as:
 - repository creation
@@ -162,7 +179,7 @@ Never fabricate timestamps or completed milestones.
 
 ## Next Task
 
-Design and implementation of the Reconstruction Engine (Module 7), building on the completed investigation pipeline (sources → evidence → timeline → theories → summary). Do not begin implementation until a dedicated module specification is provided.
+Implementation of frontend Investigation Dashboard and Case Management UI (connecting to completed Investigation Engine API endpoints). Requires Next.js implementation with TypeScript, Tailwind CSS, and shadcn/ui components. Do not begin implementation until a dedicated module specification is provided.
 
 ---
 

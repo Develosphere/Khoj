@@ -8,7 +8,6 @@ from app.schemas.timeline import TimelineListResponse
 from app.services.timeline_engine import TimelineEngine
 
 router = APIRouter()
-engine = TimelineEngine()
 
 
 @router.post("/timeline/generate", response_model=TimelineListResponse)
@@ -21,7 +20,8 @@ async def generate_timeline(
     Requires Supabase-authenticated user.
     """
     try:
-        timeline = engine.extract_timeline(evidence)
+        engine = TimelineEngine()
+        timeline = await engine.extract_timeline_async(evidence)
         return {"timeline": timeline}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
