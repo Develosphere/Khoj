@@ -171,3 +171,16 @@ All credentials are loaded dynamically from the `.env` file with validation and 
 - Added `backend/.env` and `backend/.env.example` files with placeholders for Supabase URL and anon key.
 - Implemented configuration manager in `backend/app/core/config.py` using `pydantic-settings` to load environment variables with validation.
 - Created basic FastAPI app entry point in `backend/app/main.py` with a health check endpoint returning app status and loaded Supabase URL.
+
+# Backend Authentication Module Setup - Phase 3
+
+- Added `backend/app/api/v1/endpoints/auth.py` with authenticated `GET /me` endpoint.
+- Added `backend/app/api/v1/router.py` and included auth routes under `/auth`.
+- Mounted the v1 API router in `backend/app/main.py` under `/api/v1`.
+- `/api/v1/auth/me` now returns the authenticated user's ID, email, and metadata via the Supabase-backed `get_current_user` dependency.
+
+# Backend Authentication Module Setup - Phase 4
+
+- Added environment-backed `BACKEND_CORS_ORIGINS` configuration using `pydantic-settings`.
+- Configured FastAPI `CORSMiddleware` in `backend/app/main.py` with origins loaded from `backend/.env`.
+- Added `backend/tests/test_auth.py` covering missing authorization headers and mocked valid Supabase token access to `/api/v1/auth/me`.

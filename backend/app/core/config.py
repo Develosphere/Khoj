@@ -1,4 +1,6 @@
-from pydantic import Field, ValidationError
+from pathlib import Path
+
+from pydantic import Field, ValidationError, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,9 +13,28 @@ class Settings(BaseSettings):
 
     SUPABASE_URL: str = Field(..., min_length=1, description="Supabase project URL")
     SUPABASE_ANON_KEY: str = Field(..., min_length=1, description="Supabase anon key")
+    BACKEND_CORS_ORIGINS: str = Field(
+        ...,
+        min_length=1,
+        description="Comma-separated list of allowed frontend origins for CORS",
+    )
+
+    @field_validator("BACKEND_CORS_ORIGINS")
+    @classmethod
+    def validate_cors_origins(cls, value: str) -> str:
+        origins = [origin.strip() for origin in value.split(",") if origin.strip()]
+        if not origins:
+            raise ValueError("BACKEND_CORS_ORIGINS must include at least one allowed origin")
+        return value
+
+    @computed_field
+    @property
+    def backend_cors_origins(self) -> list[str]:
+        """Parsed CORS origins for FastAPI middleware."""
+        return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",") if origin.strip()]
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=Path(__file__).resolve().parents[2] / ".env",
         env_file_encoding="utf-8",
         validate_assignment=True,
         extra="forbid",

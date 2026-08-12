@@ -236,6 +236,7 @@ Example:
 GEMINI_API_KEY=
 SUPABASE_URL=
 SUPABASE_ANON_KEY=
+BACKEND_CORS_ORIGINS=http://localhost:3000
 ```
 
 Additional variables may be required depending on deployment and fallback-provider configuration.

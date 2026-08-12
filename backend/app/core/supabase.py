@@ -73,8 +73,21 @@ def get_user_from_token(token: str) -> Any:
         if res.get("error"):
             raise RuntimeError(f"Supabase auth error: {res.get('error')}")
     else:
-        # Unknown response type, try to use it directly
-        user = res
+        error = getattr(res, "error", None)
+        if error:
+            raise RuntimeError(f"Supabase auth error: {error}")
+
+        # supabase-py v2 commonly returns a UserResponse object with a `.user` attribute.
+        user = getattr(res, "user", None)
+        if user is None:
+            data = getattr(res, "data", None)
+            user = getattr(data, "user", None) if data is not None else None
+            if user is None:
+                user = data
+
+        # Unknown response type; use it directly only if no common user/data wrapper exists.
+        if user is None:
+            user = res
 
     if not user:
         raise RuntimeError("Token validation succeeded but no user information was returned")
