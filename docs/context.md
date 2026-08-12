@@ -138,3 +138,36 @@ Do not add:
 - verbose agent summaries
 
 Those belong in dedicated documentation or Git history.
+## Backend Authentication Module Setup
+
+- Created `backend` directory structure.
+- Added `requirements.txt` with FastAPI, Supabase, python-dotenv, pydantic, and pydantic-settings.
+- Added `.env` and `.env.example` files with Supabase credential placeholders.
+- Implemented configuration manager using pydantic-settings in `backend/app/core/config.py` to load credentials dynamically and perform strict validation; missing keys produce descriptive errors on startup.
+- Created a basic FastAPI app with a health check endpoint in `backend/app/main.py`.
+
+All credentials are loaded dynamically from the `.env` file with validation and no hardcoded secrets.
+
+# Backend Authentication Module Setup - Phase 1
+
+- Created `backend` directory with necessary structure.
+- Added `backend/requirements.txt` with core dependencies: fastapi, uvicorn[standard], supabase, python-dotenv, pydantic, pydantic-settings.
+- Added `backend/.env` and `backend/.env.example` with placeholders for SUPABASE_URL and SUPABASE_ANON_KEY.
+- Implemented configuration manager in `backend/app/core/config.py` using pydantic-settings to load environment variables from `.env` file with validation.
+- Added a basic FastAPI app in `backend/app/main.py` with a health check endpoint `/health`.
+
+# Backend Authentication Module Setup - Phase 2
+
+- Implemented `backend/app/core/supabase.py` to initialize the Supabase client from environment-backed settings. The module raises a clear error if credentials are missing or the supabase library is unavailable.
+- Implemented `backend/app/core/security.py` providing a FastAPI dependency `get_current_user` that:
+  - Extracts Bearer tokens via HTTPBearer
+  - Validates tokens using the Supabase client
+  - Returns user payload on success
+  - Raises 401 Unauthorized with descriptive messages on missing/invalid/expired tokens
+
+# Backend Authentication Module Setup
+
+- Created `backend` directory and added `requirements.txt` with FastAPI and Supabase dependencies.
+- Added `backend/.env` and `backend/.env.example` files with placeholders for Supabase URL and anon key.
+- Implemented configuration manager in `backend/app/core/config.py` using `pydantic-settings` to load environment variables with validation.
+- Created basic FastAPI app entry point in `backend/app/main.py` with a health check endpoint returning app status and loaded Supabase URL.
