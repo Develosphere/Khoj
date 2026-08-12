@@ -224,6 +224,14 @@ FastAPI backend exposes `/health` for readiness probes.
 ---
 See `/docs/context.md` for stack, compliance, and milestone ledger.
 
+## Source Collection Engine (Module 3.1)
+
+- Modular async Python service for collecting web sources given a case name.
+- Type-safe models and response schemas: `title`, `url`, `source_name`, `published_at`, `content`.
+- Deduplication and filtering of results.
+- Extensible provider-based design (e.g., DuckDuckGo News).
+- FastAPI endpoint: `/api/v1/investigations/sources?case_name=...` returns structured source objects for investigation modules.
+
 ---
 
 ## 🔐 Environment Variables
@@ -297,3 +305,12 @@ Reconstruction
 ```
 
 **Turning investigation from something you only read into something you can explore.**
+
+
+## Evidence Extraction Engine (Module 3.2)
+
+- Implements modular, async service for extracting structured evidence from collected sources using Gemini Flash Lite.
+- Type-safe Evidence model/schema with fields: claim, source, confidence, evidence_type, reasoning.
+- Gemini model isolated behind `GeminiClient` for provider independence.
+- Defensive handling of malformed AI output; all results validated with Pydantic.
+- Test: `pytest backend/tests/test_evidence_engine.py`

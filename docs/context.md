@@ -49,6 +49,25 @@ AI:
 
 Do not add module implementation details here. Each module receives its own independent development prompt.
 
+## Evidence Extraction Engine Implementation (Module 3.2)
+
+- Implemented evidence extraction engine as an async, modular service in `backend/app/services/evidence_engine.py`.
+- Introduced `Evidence` model (`backend/app/models/evidence.py`) and `EvidenceSchema`/`EvidenceListResponse` schemas (`backend/app/schemas/evidence.py`) for type-safe evidence objects with fields: claim, source, confidence, evidence_type, reasoning.
+- Service uses Gemini Flash Lite (via `GeminiClient`) to extract, deduplicate, and validate factual claims from source content, assigning confidence and evidence categories.
+- Handles malformed model output defensively, never crashing the server (parsing/validation failures fall back to empty evidence lists per source).
+- Engine is provider-independent, isolates Gemini behind a thin client, and validates all outputs with Pydantic.
+
+
+---
+
+## Source Collection Engine Implementation (Module 3.1)
+
+- Implemented source collection engine as a modular async service in `backend/app/services/source_collector.py`.
+- Introduced `Source` model (`backend/app/models/source.py`) and `SourceSchema`/`SourceListResponse` schemas (`backend/app/schemas/source.py`) for type-safe source objects with fields: title, url, source_name, published_at, content.
+- Source collection uses a provider-based approach (default: DuckDuckGo news) for web search. Results are deduplicated, filtered, and normalized.
+- API endpoint `/api/v1/investigations/sources?case_name=...` returns a list of structured sources for a given case.
+- Service is designed for extensibility (additional providers) and separation of collection and processing.
+
 ## Hackathon Compliance
 
 The project must follow these rules:
@@ -93,9 +112,11 @@ The project must follow these rules:
 
 ## Current Build State
 
-**Last Updated:** 2026-08-12 PKT
+**Last Updated:** 2024-06-08 PKT
 
-- Module 7A — Reconstruction input and SimulationScreenplay contracts implemented.
+- Project foundation scaffolded with all required stack, directories, and minimal CORS/health endpoint.
+- Backend Supabase client initialization and JWT/MFA security dependencies are implemented using environment-loaded Supabase settings only.
+- No business logic implemented yet (per hackathon rules).
 
 ## Compliance / Milestone Ledger
 
@@ -123,7 +144,7 @@ Never fabricate timestamps or completed milestones.
 
 ## Next Task
 
-Module 7B — Gemini Reconstruction Director and structured generation.
+Implement Authentication (sign-up, sign-in, Supabase sessions, 2FA) module foundation.
 
 ---
 

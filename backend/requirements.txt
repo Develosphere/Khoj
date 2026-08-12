@@ -1,8 +1,9 @@
 fastapi
 uvicorn[standard]
+pytest
 supabase
 python-dotenv
 pydantic
 pydantic-settings
-pytest
 httpx
+aiohttp
