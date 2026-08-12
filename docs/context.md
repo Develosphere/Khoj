@@ -66,6 +66,15 @@ Do not add module implementation details here. Each module receives its own inde
 - Output format is a list of timeline events, each validated with Pydantic, matching the required contract for frontend/consumer use.
 - Robust error handling: invalid events or malformed evidence are logged and skipped, preserving service stability.
 
+
+## Theory Engine Implementation (Module 3.4)
+
+- Implemented theory generation engine as a modular async service in `backend/app/services/theory_engine.py`.
+- Introduced `Theory` model (`backend/app/models/theory.py`) and `TheorySchema`/`TheoryListResponse` schemas (`backend/app/schemas/theory.py`) for type-safe theory objects (theory, confidence, supporting_evidence, timeline_events, summary).
+- Service takes evidence objects and timeline events as input, generates at least 3 competing theories using Gemini Flash Lite, deduplicates similar theories, and validates with Pydantic.
+- Defensive parsing: malformed model output and invalid theories are logged and skipped; endpoint returns 422 if <3 valid theories generated.
+- FastAPI endpoint `/api/v1/investigations/theories/generate` returns structured JSON list of theories for frontend consumption.
+
 ---
 
 ## Source Collection Engine Implementation (Module 3.1)
