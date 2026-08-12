@@ -314,3 +314,11 @@ Reconstruction
 - Gemini model isolated behind `GeminiClient` for provider independence.
 - Defensive handling of malformed AI output; all results validated with Pydantic.
 - Test: `pytest backend/tests/test_evidence_engine.py`
+
+## Timeline Engine (Module 3.3)
+
+- Implements timeline generation as a modular Python service using extracted evidence objects as input.
+- Type-safe TimelineEvent model/schema with fields: time, event, confidence, supporting_evidence.
+- Merges duplicate events (same time and normalized event text), preserves supporting evidence references, and orders events chronologically.
+- Output matches required contract for frontend consumption and is strictly validated by Pydantic.
+- FastAPI POST endpoint: `/api/v1/investigations/timeline/generate` returns timeline events from evidence objects.

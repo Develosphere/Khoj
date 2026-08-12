@@ -9,3 +9,9 @@
 - Gemini Flash Lite integration via isolated `GeminiClient` service
 - Deduplication of claims across sources, categorization into evidence types, and strict Pydantic validation
 - Defensive handling of malformed AI output (JSON parsing + schema validation errors are logged and safely ignored)
+
+2024-06-09 14:00 PKT — Timeline Engine (Module 3.3) implemented
+- Modular service generates timeline events from evidence objects
+- Type-safe TimelineEvent model/schema (time, event, confidence, supporting_evidence)
+- Merges duplicate events, preserves supporting evidence references, chronological ordering, robust validation
+- FastAPI endpoint under /api/v1/investigations/timeline/generate

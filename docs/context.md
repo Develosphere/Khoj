@@ -58,6 +58,14 @@ Do not add module implementation details here. Each module receives its own inde
 - Engine is provider-independent, isolates Gemini behind a thin client, and validates all outputs with Pydantic.
 
 
+## Timeline Engine Implementation (Module 3.3)
+
+- Implemented timeline generation engine as a modular service in `backend/app/services/timeline_engine.py`.
+- Introduced `TimelineEvent` model (`backend/app/models/timeline.py`) and `TimelineEventSchema`/`TimelineListResponse` schemas (`backend/app/schemas/timeline.py`) for type-safe timeline events with fields: time, event, confidence, supporting_evidence.
+- Service takes evidence objects as input, extracts time/event, merges duplicates, aggregates supporting evidence, and sorts events chronologically.
+- Output format is a list of timeline events, each validated with Pydantic, matching the required contract for frontend/consumer use.
+- Robust error handling: invalid events or malformed evidence are logged and skipped, preserving service stability.
+
 ---
 
 ## Source Collection Engine Implementation (Module 3.1)
