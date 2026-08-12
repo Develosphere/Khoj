@@ -96,6 +96,7 @@ The project must follow these rules:
 **Last Updated:** 2024-06-08 PKT
 
 - Project foundation scaffolded with all required stack, directories, and minimal CORS/health endpoint.
+- Backend Supabase client initialization and JWT/MFA security dependencies are implemented using environment-loaded Supabase settings only.
 - No business logic implemented yet (per hackathon rules).
 
 ## Compliance / Milestone Ledger
@@ -105,6 +106,7 @@ Maintain concise timestamped milestone entries using:
 `YYYY-MM-DD HH:MM PKT — milestone`
 
 2024-06-08 18:00 PKT — project foundation scaffold complete
+2024-06-08 18:30 PKT — backend Supabase client and JWT/MFA security middleware complete
 
 Only record meaningful milestones such as:
 - repository creation
@@ -159,11 +161,9 @@ All credentials are loaded dynamically from the `.env` file with validation and 
 # Backend Authentication Module Setup - Phase 2
 
 - Implemented `backend/app/core/supabase.py` to initialize the Supabase client from environment-backed settings. The module raises a clear error if credentials are missing or the supabase library is unavailable.
-- Implemented `backend/app/core/security.py` providing a FastAPI dependency `get_current_user` that:
-  - Extracts Bearer tokens via HTTPBearer
-  - Validates tokens using the Supabase client
-  - Returns user payload on success
-  - Raises 401 Unauthorized with descriptive messages on missing/invalid/expired tokens
+- Implemented `backend/app/core/security.py` providing FastAPI security dependencies:
+  - `get_current_user` extracts Bearer tokens via HTTPBearer, validates them with `supabase.auth.get_user(token)`, returns the user payload on success, and raises descriptive 401 Unauthorized errors for missing, malformed/invalid, or expired tokens.
+  - `require_mfa` validates the Bearer token, reads the JWT `aal` claim, allows `aal2`, and raises 403 Forbidden instructing `aal1` users to complete 2FA before accessing MFA-protected resources.
 
 # Backend Authentication Module Setup
 

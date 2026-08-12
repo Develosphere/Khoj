@@ -18,6 +18,8 @@ if create_client is None:
     raise RuntimeError("supabase library is not available. Add 'supabase' to your requirements and install dependencies")
 
 supabase_client = create_client(settings.SUPABASE_URL, settings.SUPABASE_ANON_KEY)
+# Backwards-friendly alias for modules that import the initialized client directly.
+supabase = supabase_client
 
 
 def get_user_from_token(token: str) -> Any:
@@ -54,6 +56,8 @@ def get_user_from_token(token: str) -> Any:
     # 3) If still no result, raise with collected attempt messages
     if not res:
         msgs = "; ".join([str(a) for a in attempts if a])
+        if not msgs:
+            msgs = "Supabase returned an empty authentication response"
         raise RuntimeError(f"Failed to validate token with Supabase: {msgs}")
 
     # Normalize response shape
