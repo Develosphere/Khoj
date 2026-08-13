@@ -2,30 +2,24 @@
 node_modules/
 .env
 .env.*
-backend/.env
-
-# Python caching
+# Python
 __pycache__/
 *.pyc
-.pytest_cache/
-**/.pytest_cache/
-
-# Tests and Test Configurations
-tests/
-**/tests/
-test_*.py
-**/test_*.py
-pytest.ini
-**/pytest.ini
-
 # Build
 .next/
 dist/
-
 # System
 .DS_Store
-
 # Data
 /data/
 !/data/fixtures/.gitkeep
 !/data/simulations/.gitkeep
+
+
+# prototypes
+prototypes/
+prototypes/*
+../prototypes/Forensic-3D-Reconstruction-Engine/frontend/
+../prototypes/Forensic-3D-Reconstruction-Engine/frontend/*
+../prototypes/Forensic-3D-Reconstruction-Engine/backend/
+../prototypes/Forensic-3D-Reconstruction-Engine/backend/*

@@ -183,170 +183,76 @@ A user can:
 
 You will need:
 
-* **Python 3.9+** (for backend)
-* **Node.js 18+** and npm (for frontend)
-* **Supabase project** ([create one here](https://supabase.com))
-* **Gemini API key** ([get one here](https://aistudio.google.com/app/apikey))
+* Node.js and npm
+* Python
+* a Supabase project
+* a Gemini API key
 
-### Backend Setup
+### Clone
 
-1. **Navigate to backend directory:**
-   ```bash
-   cd backend
-   ```
+```bash
+git clone <repository-url>
+cd khoj
+```
 
-2. **Create virtual environment (recommended):**
-   ```bash
-   python -m venv venv
-   # On Windows:
-   venv\Scripts\activate
-   # On macOS/Linux:
-   source venv/bin/activate
-   ```
+### Frontend
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+cd frontend
+npm install
+npm run build
+```
 
-4. **Configure environment variables:**
-   
-   Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` and add your credentials:
-   ```env
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_ANON_KEY=your-supabase-anon-key
-   BACKEND_CORS_ORIGINS=http://localhost:3000
-   GEMINI_API_KEY=your-gemini-api-key
-   OPENROUTER_API_KEY=your-openrouter-key  # Optional fallback
-   ```
+### Backend
 
-5. **Start the backend server:**
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-   
-   Backend will be available at `http://localhost:8000`
-   
-   API documentation: `http://localhost:8000/docs`
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-### Frontend Setup
+- Copy `.env.example` to `.env` and fill in secrets.
+- Requires running Supabase project (see Supabase docs).
 
-1. **Navigate to frontend directory:**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment:**
-   
-   Create `.env.local` with your Supabase credentials:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-   NEXT_PUBLIC_API_URL=http://localhost:8000
-   ```
-
-4. **Start development server:**
-   ```bash
-   npm run dev
-   ```
-   
-   Frontend will be available at `http://localhost:3000`
-
-### Docker Compose (Alternative)
-
-Run the entire stack with Docker:
+### Docker Compose
 
 ```bash
 docker-compose up --build
 ```
 
-### Verify Setup
+### Health Check
 
-1. **Backend health check:**
-   ```bash
-   curl http://localhost:8000/health
-   ```
-
-2. **Test Investigation API:**
-   ```bash
-   curl -X POST http://localhost:8000/api/v1/investigations/run \
-     -H "Content-Type: application/json" \
-     -H "Authorization: Bearer YOUR_TOKEN" \
-     -d '{"case_name": "test investigation"}'
-   ```
-
-### Running Tests
-
-Backend includes validation scripts:
-
-```bash
-cd backend
-python validate_imports.py
-```
-
-For unit tests (requires pytest):
-```bash
-pytest tests/
-```
+FastAPI backend exposes `/health` for readiness probes.
 
 ---
+See `/docs/context.md` for stack, compliance, and milestone ledger.
 
-## 📡 Investigation Engine API
+## Source Collection Engine (Module 3.1)
 
-The backend provides a complete investigation pipeline with the following authenticated endpoints:
-
-### Full Investigation Pipeline
-
-```http
-POST /api/v1/investigations/run
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "case_name": "JFK Assassination Investigation"
-}
-```
-
-**Response:** Complete investigation object with sources, evidence, timeline, theories, and summary.
-
-### Individual Stages
-
-- **Source Collection:** `GET /api/v1/investigations/sources?case_name=...`
-- **Timeline Generation:** `POST /api/v1/investigations/timeline/generate`
-- **Theory Generation:** `POST /api/v1/investigations/theories/generate`
-- **Summary Generation:** `POST /api/v1/investigations/summary/generate`
-
-See `/docs/API_SPEC.md` for detailed endpoint documentation.
+- Modular async Python service for collecting web sources given a case name.
+- Type-safe models and response schemas: `title`, `url`, `source_name`, `published_at`, `content`.
+- Deduplication and filtering of results.
+- Extensible provider-based design (e.g., DuckDuckGo News).
+- FastAPI endpoint: `/api/v1/investigations/sources?case_name=...` returns structured source objects for investigation modules.
 
 ---
 
 ## 🔐 Environment Variables
 
-```env
-# Backend (.env)
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-supabase-anon-key
-BACKEND_CORS_ORIGINS=http://localhost:3000
-GEMINI_API_KEY=your-gemini-api-key
-OPENROUTER_API_KEY=your-openrouter-key  # Optional
+Create the required environment files for the frontend and backend.
 
-# Frontend (.env.local)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-NEXT_PUBLIC_API_URL=http://localhost:8000
+Example:
+
+```env
+GEMINI_API_KEY=
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+BACKEND_CORS_ORIGINS=http://localhost:3000
 ```
 
-**Security:** Never commit secrets or API keys to the repository. Use `.env` files (which are gitignored).
+Additional variables may be required depending on deployment and fallback-provider configuration.
+
+Never commit secrets or API keys to the repository.
 
 ---
 
@@ -403,64 +309,11 @@ Reconstruction
 
 **Turning investigation from something you only read into something you can explore.**
 
----
 
-## 🧪 AI Models & Tools Used
+## Evidence Extraction Engine (Module 3.2)
 
-### Primary AI Model
-- **Gemini 2.0 Flash Lite** — Google's lightweight generative AI model for evidence extraction, timeline generation, theory development, and investigation summarization
-
-### Fallback Provider
-- **OpenRouter** — Multi-model API gateway (implementation complete, currently unused)
-
-### Development Tools
-- **GitHub Copilot** — AI pair programming assistant
-- **Kiro IDE** — AI-powered development environment
-
-### Libraries & Frameworks
-All open-source dependencies are listed in:
-- `backend/requirements.txt` (Python)
-- `frontend/package.json` (Node.js)
-
-### Licenses
-- FastAPI: MIT License
-- Next.js: MIT License
-- Pydantic: MIT License
-- Three.js: MIT License
-- shadcn/ui: MIT License
-
-See individual library documentation for complete license information.
-
----
-
-## 🏗️ Implementation Status
-
-### ✅ Completed Modules
-
-**Phase 1 - Authentication**
-- Supabase Auth integration
-- JWT token validation
-- 2FA support
-
-**Phase 3 - Investigation Engine (100% Complete)**
-- Source collection with DuckDuckGo provider
-- Evidence extraction with Gemini AI
-- Timeline generation with AI + fallback regex
-- Theory generation (≥3 competing theories)
-- Investigation summarization
-- Unified orchestration pipeline
-- All API endpoints tested and validated
-
-### 🚧 In Progress
-
-**Phase 2 - Case Management**
-- Database schema design
-- CRUD operations
-
-**Phase 4-8 - Frontend & Visualization**
-- Investigation dashboard UI
-- Evidence board visualization
-- 3D reconstruction engine
-- Interactive simulation viewer
-
----
+- Implements modular, async service for extracting structured evidence from collected sources using Gemini Flash Lite.
+- Type-safe Evidence model/schema with fields: claim, source, confidence, evidence_type, reasoning.
+- Gemini model isolated behind `GeminiClient` for provider independence.
+- Defensive handling of malformed AI output; all results validated with Pydantic.
+- Test: `pytest backend/tests/test_evidence_engine.py`
