@@ -8,6 +8,9 @@ class EvidenceSchema(BaseModel):
     id: str | None = None
     claim: str = Field(..., description="Factual claim extracted from the source.")
     source: str = Field(..., description="Source URL or unique identifier.")
+    source_title: str | None = Field(None, description="Title of the source article.")
+    source_url: str | None = Field(None, description="URL of the source article.")
+    publisher: str | None = Field(None, description="Publisher/source name.")
     confidence: float = Field(
         ..., ge=0, le=1, description="Confidence score between 0 and 1 inclusive."
     )
@@ -16,6 +19,7 @@ class EvidenceSchema(BaseModel):
         "official_statement",
         "media_report",
         "forensic",
+        "circumstantial",
         "unknown",
     ] = Field(..., description="Type/category of evidence.")
     reasoning: str = Field(

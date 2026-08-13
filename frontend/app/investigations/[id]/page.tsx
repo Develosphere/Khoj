@@ -20,6 +20,9 @@ interface Evidence {
   id: string;
   claim: string;
   source: string;
+  source_title?: string;
+  source_url?: string;
+  publisher?: string;
   confidence: number;
   evidence_type: string;
   reasoning: string;
@@ -65,6 +68,7 @@ export default function InvestigationPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"sources" | "evidence" | "timeline" | "theories">("sources");
+  const [dataMode, setDataMode] = useState<"live" | "demo" | null>(null); // Track which data source is being used
 
   // Pipeline processing state
   const [analyzing, setAnalyzing] = useState(false);
@@ -134,7 +138,10 @@ export default function InvestigationPage() {
         {
           id: "demo-ev-1",
           claim: "Multiple witnesses reported seeing suspicious activity at the location",
-          source: "Demo News Network witness reports",
+          source: "https://example.com/article-1",
+          source_title: `Investigation reveals new details about ${caseData.title}`,
+          source_url: "https://example.com/article-1",
+          publisher: "Demo News Network",
           confidence: 0.85,
           evidence_type: "eyewitness",
           reasoning: "Corroborated by multiple independent witness statements collected at the scene"
@@ -142,7 +149,10 @@ export default function InvestigationPage() {
         {
           id: "demo-ev-2",
           claim: "Physical evidence was collected and is being analyzed by forensic teams",
-          source: "Official Reports forensic unit",
+          source: "https://example.com/article-2",
+          source_title: `Authorities release statement on ${caseData.title}`,
+          source_url: "https://example.com/article-2",
+          publisher: "Official Reports",
           confidence: 0.92,
           evidence_type: "forensic",
           reasoning: "Direct statement from official forensic investigation team with documented evidence chain"
@@ -150,7 +160,10 @@ export default function InvestigationPage() {
         {
           id: "demo-ev-3",
           claim: "Timeline of events has been established through security footage analysis",
-          source: "Investigation Times security analysis",
+          source: "https://example.com/article-3",
+          source_title: `Expert analysis: Understanding ${caseData.title}`,
+          source_url: "https://example.com/article-3",
+          publisher: "Investigation Times",
           confidence: 0.88,
           evidence_type: "official_statement",
           reasoning: "Security camera timestamps provide objective temporal evidence of the sequence of events"
@@ -158,7 +171,10 @@ export default function InvestigationPage() {
         {
           id: "demo-ev-4",
           claim: "Investigators have identified persons of interest based on witness descriptions",
-          source: "Demo News Network investigation update",
+          source: "https://example.com/article-1",
+          source_title: `Investigation reveals new details about ${caseData.title}`,
+          source_url: "https://example.com/article-1",
+          publisher: "Demo News Network",
           confidence: 0.75,
           evidence_type: "circumstantial",
           reasoning: "Composite sketches created from witness descriptions show consistent patterns"
@@ -268,17 +284,20 @@ export default function InvestigationPage() {
       clearInterval(interval);
       setAnalysisStep(5);
       
-      // If API returns empty results, use demo fallback
-      if (!updatedDetails.sources || updatedDetails.sources.length === 0) {
-        console.log("API returned no data, using demo fallback");
-        loadDemoFallbackData();
-      } else {
+      // Check if we got real sources (3+ articles means API worked)
+      if (updatedDetails.sources && updatedDetails.sources.length >= 3) {
+        console.log("✓ Using live sources from API");
+        setDataMode("live");
         setCaseData(updatedDetails);
+      } else {
+        console.log("⚠ API returned insufficient data, using demo fallback");
+        setDataMode("demo");
+        loadDemoFallbackData();
       }
     } catch (err: any) {
       console.error("Analysis failed, using demo fallback:", err);
       clearInterval(interval);
-      // On ANY error, load demo data instead of showing error
+      setDataMode("demo");
       loadDemoFallbackData();
     } finally {
       clearInterval(interval);
@@ -359,6 +378,31 @@ export default function InvestigationPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {dataMode && (
+              <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide flex items-center gap-1.5 ${
+                dataMode === "live" 
+                  ? "bg-emerald-950/40 border border-emerald-500/30 text-emerald-400"
+                  : "bg-amber-950/40 border border-amber-500/30 text-amber-400"
+              }`}>
+                {dataMode === "live" ? (
+                  <>
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 12 12">
+                      <circle cx="6" cy="6" r="6">
+                        <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
+                      </circle>
+                    </svg>
+                    Live Sources
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M8 2a6 6 0 100 12A6 6 0 008 2zm0 1a5 5 0 110 10A5 5 0 018 3zm-.5 2v3.5l2.5 1.5.5-.866-2-1.2V5h-1z"/>
+                    </svg>
+                    Demo Dataset
+                  </>
+                )}
+              </span>
+            )}
             {hasAnalysisData && !analyzing && (
               <button
                 onClick={handleRunAnalysis}
@@ -496,17 +540,30 @@ export default function InvestigationPage() {
                     {caseData.sources.map((src) => (
                       <div key={src.id} className="p-4 bg-zinc-950/60 border border-zinc-900 rounded-xl hover:border-zinc-800 transition-all duration-200">
                         <div className="flex items-start justify-between gap-4 mb-2">
-                          <a href={src.url} target="_blank" rel="noopener noreferrer" className="font-bold text-zinc-200 text-sm hover:text-violet-400 hover:underline line-clamp-1">
+                          <h3 className="font-bold text-zinc-200 text-sm line-clamp-2 flex-1">
                             {src.title}
-                          </a>
-                          <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
-                            {src.source_name}
-                          </span>
+                          </h3>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+                              {src.source_name}
+                            </span>
+                            <a 
+                              href={src.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="p-1.5 rounded-lg bg-violet-950/40 border border-violet-500/20 text-violet-400 hover:bg-violet-950/80 hover:border-violet-500/40 transition-all duration-200 flex items-center gap-1"
+                              title="Open source article"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            </a>
+                          </div>
                         </div>
-                        <p className="text-zinc-400 text-xs leading-relaxed line-clamp-2 mb-3">{src.content}</p>
-                        <div className="flex justify-between items-center text-[10px] text-zinc-500 font-mono">
-                          <span>URL: {src.url}</span>
-                          {src.published_at && <span>Published: {src.published_at}</span>}
+                        <p className="text-zinc-400 text-xs leading-relaxed line-clamp-3 mb-3">{src.content}</p>
+                        <div className="flex justify-between items-center text-[10px] text-zinc-500 font-mono pt-2 border-t border-zinc-900/60">
+                          <span className="truncate max-w-[400px]">{src.url}</span>
+                          {src.published_at && <span className="shrink-0">📅 {src.published_at}</span>}
                         </div>
                       </div>
                     ))}
@@ -516,7 +573,7 @@ export default function InvestigationPage() {
                 {/* 2. Evidence Claims Tab */}
                 {activeTab === "evidence" && (
                   <div className="space-y-4">
-                    {caseData.evidence.map((ev) => (
+                    {caseData.evidence.filter(ev => ev.source_url || ev.publisher).map((ev) => (
                       <div key={ev.id} className="p-5 bg-zinc-950/60 border border-zinc-900 rounded-xl">
                         <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                           <p className="text-sm font-semibold text-zinc-100 max-w-xl">{ev.claim}</p>
@@ -524,6 +581,7 @@ export default function InvestigationPage() {
                             ev.evidence_type === "forensic" ? "bg-emerald-950/30 border-emerald-500/20 text-emerald-400" :
                             ev.evidence_type === "official_statement" ? "bg-blue-950/30 border-blue-500/20 text-blue-400" :
                             ev.evidence_type === "eyewitness" ? "bg-amber-950/30 border-amber-500/20 text-amber-400" :
+                            ev.evidence_type === "circumstantial" ? "bg-purple-950/30 border-purple-500/20 text-purple-400" :
                             "bg-zinc-900 border-zinc-800 text-zinc-400"
                           }`}>
                             {ev.evidence_type}
@@ -535,15 +593,32 @@ export default function InvestigationPage() {
                           {ev.reasoning}
                         </p>
 
-                        <div className="flex items-center justify-between text-[10px] font-mono">
+                        <div className="flex items-center justify-between border-t border-zinc-900/60 pt-3">
+                          <div className="flex items-center gap-3">
+                            <span className="text-zinc-500 text-[10px] font-semibold uppercase">Source:</span>
+                            <span className="text-zinc-300 text-xs font-medium">{ev.publisher || "Unknown"}</span>
+                            {ev.source_url && (
+                              <a 
+                                href={ev.source_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 px-2 py-1 rounded bg-violet-950/40 border border-violet-500/20 text-violet-400 hover:bg-violet-950/80 hover:border-violet-500/40 transition-all duration-200 text-[10px] font-semibold"
+                                title={ev.source_title || "Open source article"}
+                              >
+                                Open Source
+                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                              </a>
+                            )}
+                          </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-zinc-500">Confidence:</span>
+                            <span className="text-zinc-500 text-[10px]">Confidence:</span>
                             <div className="w-20 h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
                               <div className="h-full bg-violet-500 rounded-full" style={{ width: `${ev.confidence * 100}%` }}></div>
                             </div>
-                            <span className="text-violet-400 font-bold">{(ev.confidence * 100).toFixed(0)}%</span>
+                            <span className="text-violet-400 font-bold text-[10px]">{(ev.confidence * 100).toFixed(0)}%</span>
                           </div>
-                          <span className="text-zinc-500 line-clamp-1 max-w-[200px]">Ref: {ev.source}</span>
                         </div>
                       </div>
                     ))}

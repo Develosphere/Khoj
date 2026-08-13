@@ -246,6 +246,9 @@ async def analyze_case(
                 "case_id": case_id,
                 "claim": ev.claim,
                 "source": ev.source,
+                "source_title": ev.source_title,
+                "source_url": ev.source_url,
+                "publisher": ev.publisher,
                 "confidence": ev.confidence,
                 "evidence_type": ev.evidence_type,
                 "reasoning": ev.reasoning

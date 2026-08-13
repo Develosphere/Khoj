@@ -70,6 +70,7 @@ class EvidenceEngine:
             content = source.get("content", "") or ""
             title = source.get("title", "") or ""
             url = source.get("url", "") or ""
+            source_name = source.get("source_name", "") or ""
 
             if not content.strip():
                 # Nothing to analyze
@@ -77,7 +78,7 @@ class EvidenceEngine:
 
             prompt = self._build_prompt(title=title, content=content)
             ai_response = await self.model.complete(prompt)
-            parsed_items = self._parse_ai_response(ai_response, url)
+            parsed_items = self._parse_ai_response(ai_response, url, title, source_name)
 
             validated: List[EvidenceSchema] = []
             for raw in parsed_items:
@@ -125,8 +126,8 @@ class EvidenceEngine:
             "- If there are no clear factual claims, return an empty JSON array: [].\n"
         )
 
-    def _parse_ai_response(self, ai_response: str, url: str) -> List[dict]:
-        """Parse Gemini response, attach source URL, and handle malformed output.
+    def _parse_ai_response(self, ai_response: str, url: str, source_title: str, publisher: str) -> List[dict]:
+        """Parse Gemini response, attach source metadata, and handle malformed output.
 
         Any parsing issues result in an empty list.
         """
@@ -148,8 +149,11 @@ class EvidenceEngine:
             for item in data:
                 # Ensure each item is a dict we can enrich
                 if isinstance(item, dict):
-                    # Attach/override source URL so callers always get a normalized source field
+                    # Attach source metadata so every evidence can be traced
                     item["source"] = url
+                    item["source_url"] = url
+                    item["source_title"] = source_title
+                    item["publisher"] = publisher
             # Filter out any non-dict entries
             return [item for item in data if isinstance(item, dict)]
 
