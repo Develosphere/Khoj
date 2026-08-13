@@ -1,5 +1,11 @@
 import { supabase } from '../lib/supabase'
 
+const backendApiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/+$/, '')
+
+function resolveApiUrl(path: string) {
+  return backendApiUrl ? `${backendApiUrl}${path}` : path
+}
+
 export type DashboardStats = {
   total_cases: number
   active_cases: number
@@ -23,7 +29,9 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
   headers.set('Authorization', `Bearer ${token}`)
   if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
 
-  const response = await fetch(path, { ...init, headers })
+  // Call FastAPI directly when its public URL is configured. Proxy redirects
+  // can cross origins and browsers correctly remove Authorization for safety.
+  const response = await fetch(resolveApiUrl(path), { ...init, headers })
   if (!response.ok) throw new Error(await responseError(response))
   return response.json() as Promise<T>
 }
