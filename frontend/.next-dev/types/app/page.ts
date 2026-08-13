@@ -1,4 +1,4 @@
-// File: E:\Nathan\Hackathon\SSUET\Build With AI\KHOJ\frontend\app\page.tsx
+// File: D:\KHOJ\KHOJ\Khoj\frontend\app\page.tsx
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

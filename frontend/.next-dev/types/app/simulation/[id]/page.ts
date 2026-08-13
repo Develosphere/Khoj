@@ -1,4 +1,4 @@
-// File: E:\Nathan\Hackathon\SSUET\Build With AI\KHOJ\frontend\app\simulation\[id]\page.tsx
+// File: D:\KHOJ\KHOJ\Khoj\frontend\app\simulation\[id]\page.tsx
 import * as entry from '../../../../../app/simulation/[id]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

@@ -13,13 +13,17 @@ class Settings(BaseSettings):
 
     SUPABASE_URL: str = Field(..., min_length=1, description="Supabase project URL")
     SUPABASE_ANON_KEY: str = Field(..., min_length=1, description="Supabase anon key")
+    SUPABASE_KEY: str | None = Field(default=None, description="Supabase key (optional alias)")
+    SUPABASE_SERVICE_ROLE: str | None = Field(default=None, description="Supabase service role key")
     BACKEND_CORS_ORIGINS: str = Field(
         ...,
         min_length=1,
         description="Comma-separated list of allowed frontend origins for CORS",
     )
+    CORS_ORIGINS: str | None = Field(default=None, description="CORS origins (optional alias)")
     GEMINI_API_KEY: str | None = Field(default=None, repr=False)
     GEMINI_MODEL: str = "gemini-flash-lite-latest"
+    OPENROUTER_API_KEY: str | None = Field(default=None, repr=False, description="OpenRouter API key (optional)")
 
     @field_validator("BACKEND_CORS_ORIGINS")
     @classmethod
