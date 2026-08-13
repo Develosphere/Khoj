@@ -1,42 +1,36 @@
-import os
-import aiohttp
 import logging
+import aiohttp
+
+from app.core.config import settings
+
 
 class GeminiClient:
-    """
-    Async Gemini Flash Lite client for factual claim extraction.
-    Placeholder for real Gemini Flash Lite API integration.
-    """
-    def __init__(self, api_key: str = None):
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY", "demo-key")
-        self.base_url = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
+    """Small async boundary around Gemini's generateContent REST API."""
+
+    def __init__(self, api_key: str | None = None):
+        self.api_key = api_key or settings.GEMINI_API_KEY
+        self.model = settings.GEMINI_MODEL
         self.logger = logging.getLogger(__name__)
 
     async def complete(self, prompt: str) -> str:
-        """
-        Sends a prompt to Gemini Flash Lite, returns response as string.
-        (This implementation is a stub; replace with actual API call.)
-        """
-        # Here you would call Gemini's REST API.
-        # For now, just raise NotImplementedError to prevent accidental use in prod.
-        raise NotImplementedError("GeminiClient.complete must be implemented with Gemini Flash Lite API.")
-
-    # For local testing: Uncomment to simulate a plausible response shape.
-    # async def complete(self, prompt: str) -> str:
-    #     # Simulate a Gemini response for evidence extraction.
-    #     import json
-    #     dummy = [
-    #         {
-    #             "claim": "A blue car ran a red light.",
-    #             "confidence": 0.85,
-    #             "evidence_type": "eyewitness",
-    #             "reasoning": "Multiple witnesses reported this event."
-    #         },
-    #         {
-    #             "claim": "The accident occurred at 5th and Main.",
-    #             "confidence": 0.9,
-    #             "evidence_type": "official_statement",
-    #             "reasoning": "Confirmed by police report."
-    #         }
-    #     ]
-    #     return json.dumps(dummy)
+        if not self.api_key:
+            raise RuntimeError("Gemini is not configured. Set GEMINI_API_KEY.")
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "responseMimeType": "application/json",
+                "temperature": 0.15,
+            },
+        }
+        timeout = aiohttp.ClientTimeout(total=90)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.post(url, params={"key": self.api_key}, json=payload) as response:
+                if response.status >= 400:
+                    self.logger.error("Gemini request failed with status %s", response.status)
+                    raise RuntimeError("Gemini reconstruction request failed.")
+                body = await response.json()
+        try:
+            return body["candidates"][0]["content"]["parts"][0]["text"]
+        except (KeyError, IndexError, TypeError) as exc:
+            raise RuntimeError("Gemini returned an empty reconstruction response.") from exc

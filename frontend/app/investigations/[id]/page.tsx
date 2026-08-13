@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiService } from "../../../services/api";
+import { generateSimulation, toReconstructionContext } from "../../../services/simulations";
 
 interface Source {
   id: string;
@@ -68,6 +69,8 @@ export default function InvestigationPage() {
   // Pipeline processing state
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState(0);
+  const [generatingTheoryId, setGeneratingTheoryId] = useState<string | null>(null);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const fetchDetails = useCallback(async () => {
     setLoading(true);
@@ -117,6 +120,27 @@ export default function InvestigationPage() {
       clearInterval(interval);
       setAnalyzing(false);
       setAnalysisStep(0);
+    }
+  };
+
+  const handleGenerateReconstruction = async (theory: Theory) => {
+    if (generatingTheoryId || !caseData) return;
+    setGeneratingTheoryId(theory.id);
+    setGenerationError(null);
+    try {
+      const context = toReconstructionContext(caseData.id, caseData.evidence, caseData.timeline_events, theory);
+      if (!context.evidence.length || !context.timeline.length || !context.selected_theory.supporting_evidence_ids.length) {
+        throw new Error("This theory does not yet have enough linked evidence and timeline provenance for reconstruction.");
+      }
+      const screenplay = await generateSimulation({
+        investigation_id: caseData.id,
+        selected_theory_id: theory.id,
+        context,
+      });
+      router.push(`/simulation/${screenplay.id}`);
+    } catch (err: any) {
+      setGenerationError(err.message || "Unable to generate this reconstruction.");
+      setGeneratingTheoryId(null);
     }
   };
 
@@ -389,6 +413,11 @@ export default function InvestigationPage() {
                 {/* 4. Competing Theories Tab */}
                 {activeTab === "theories" && (
                   <div className="space-y-6">
+                    {generationError && (
+                      <div className="rounded-lg border border-rose-500/20 bg-rose-950/20 p-3 text-xs text-rose-300">
+                        {generationError}
+                      </div>
+                    )}
                     {caseData.theories.map((th, index) => (
                       <div key={th.id} className="p-6 bg-zinc-950/60 border border-zinc-900 rounded-2xl relative overflow-hidden">
                         {/* Decorative background number */}
@@ -423,6 +452,14 @@ export default function InvestigationPage() {
                             <span className="text-zinc-300">{th.timeline_events.length} temporal points</span>
                           </div>
                         </div>
+                        <button
+                          type="button"
+                          disabled={Boolean(generatingTheoryId) || !th.id || caseData.evidence.length === 0 || caseData.timeline_events.length === 0}
+                          onClick={() => handleGenerateReconstruction(th)}
+                          className="mt-5 w-full rounded-lg border border-cyan-500/30 bg-cyan-950/20 px-4 py-2.5 text-xs font-semibold tracking-wide text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-950/35 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {generatingTheoryId === th.id ? "Generating reconstruction…" : "Generate Reconstruction"}
+                        </button>
                       </div>
                     ))}
                   </div>

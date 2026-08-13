@@ -5,6 +5,7 @@ from typing import List, Literal
 class EvidenceSchema(BaseModel):
     """API schema for a single evidence item returned by the engine."""
 
+    id: str | None = None
     claim: str = Field(..., description="Factual claim extracted from the source.")
     source: str = Field(..., description="Source URL or unique identifier.")
     confidence: float = Field(

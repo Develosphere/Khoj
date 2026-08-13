@@ -35,6 +35,12 @@ export type ReconstructionContext = {
   selected_theory: TheoryInput
 }
 
+export type GenerateSimulationRequest = {
+  investigation_id: string
+  selected_theory_id: string
+  context: ReconstructionContext
+}
+
 export type EnvironmentPreset =
   | 'urban_street' | 'residential_street' | 'intersection' | 'building_exterior'
   | 'office_room' | 'parking_area' | 'corridor'

@@ -112,7 +112,7 @@ The project must follow these rules:
 
 ## Current Build State
 
-**Last Updated:** 2026-08-13 08:33 PKT
+**Last Updated:** 2026-08-13 09:12 PKT
 
 - Project foundation scaffolded with all required stack, directories, and minimal CORS/health endpoint.
 - Backend Supabase client initialization and JWT/MFA security dependencies are implemented using environment-loaded Supabase settings only.
@@ -121,6 +121,9 @@ The project must follow these rules:
 - Module 7C — Provenance and grounding validation complete.
 - Module 7 Reconstruction Engine complete: normalized inputs, SimulationScreenplay contract, live Gemini generation, provenance validation, Supabase persistence and simulation API implemented.
 - Module 8A — Deterministic React Three Fiber simulation runtime implemented with screenplay-driven entities and playback controls.
+- Module 8B — Screenplay-driven actor actions, procedural animation, entity orientation, event resolution and clearer reconstruction behavior implemented.
+- Module 8C — Procedural environment factory, time-of-day lighting, asset registry/fallback system and presentation-quality reconstruction scene implemented.
+- Module 8D — Deterministic screenplay-driven cinematic CameraDirector implemented with semantic shot behavior, target tracking and seek-safe transitions.
 
 ## Compliance / Milestone Ledger
 
@@ -135,6 +138,9 @@ Maintain concise timestamped milestone entries using:
 2026-08-13 06:45 PKT — Module 7C provenance and grounding validation complete
 2026-08-13 06:58 PKT — Module 7 Reconstruction Engine persistence and simulation API complete
 2026-08-13 08:33 PKT — Module 8A deterministic React Three Fiber simulation runtime complete
+2026-08-13 08:57 PKT — Module 8B deterministic procedural animation and event behavior complete
+2026-08-13 09:06 PKT — Module 8C environment factory, lighting and asset fallback system complete
+2026-08-13 09:12 PKT — Module 8D deterministic cinematic CameraDirector complete
 
 Only record meaningful milestones such as:
 - repository creation
@@ -153,7 +159,7 @@ Never fabricate timestamps or completed milestones.
 
 ## Next Task
 
-Module 8B — Entity actions, events and deterministic procedural animation
+Module 8E — Production integration, reconstruction UI and final polish
 
 ---
 

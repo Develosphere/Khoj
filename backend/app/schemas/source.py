@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class SourceSchema(BaseModel):
+    id: str | None = None
     title: str
     url: str
     source_name: str

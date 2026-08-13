@@ -18,6 +18,8 @@ class Settings(BaseSettings):
         min_length=1,
         description="Comma-separated list of allowed frontend origins for CORS",
     )
+    GEMINI_API_KEY: str | None = Field(default=None, repr=False)
+    GEMINI_MODEL: str = "gemini-flash-lite-latest"
 
     @field_validator("BACKEND_CORS_ORIGINS")
     @classmethod
