@@ -1,16 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    appDir: true
+  },
   images: {
     domains: []
   },
   // Set up rewrites for API calls to backend
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:8000";
     return [
       {
         source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
+        destination: process.env.NEXT_PUBLIC_BACKEND_API_URL + '/api/:path*',
       },
     ]
   },
