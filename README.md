@@ -1,3 +1,6 @@
+<img width="2752" height="1536" alt="Crime_scene_banner_design_2K_202608130721" src="https://github.com/user-attachments/assets/ba3242e7-0c29-4c83-99bf-42ff6aabf450" />
+
+
 # KHOJ — AI Investigation & 3D Reconstruction Platform
 
 > **From fragmented information to structured evidence, competing theories, and visual reconstruction.**
