@@ -15,6 +15,9 @@ dist/
 !/data/fixtures/.gitkeep
 !/data/simulations/.gitkeep
 
+venv
+backend/venv
+frontend/venv
 
 # prototypes
 prototypes/

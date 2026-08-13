@@ -112,7 +112,7 @@ The project must follow these rules:
 
 ## Current Build State
 
-**Last Updated:** 2026-08-13 06:58 PKT
+**Last Updated:** 2026-08-13 08:33 PKT
 
 - Project foundation scaffolded with all required stack, directories, and minimal CORS/health endpoint.
 - Backend Supabase client initialization and JWT/MFA security dependencies are implemented using environment-loaded Supabase settings only.
@@ -120,6 +120,7 @@ The project must follow these rules:
 - Module 7B — Live Gemini Reconstruction Director complete.
 - Module 7C — Provenance and grounding validation complete.
 - Module 7 Reconstruction Engine complete: normalized inputs, SimulationScreenplay contract, live Gemini generation, provenance validation, Supabase persistence and simulation API implemented.
+- Module 8A — Deterministic React Three Fiber simulation runtime implemented with screenplay-driven entities and playback controls.
 
 ## Compliance / Milestone Ledger
 
@@ -133,6 +134,7 @@ Maintain concise timestamped milestone entries using:
 2026-08-13 06:40 PKT — Module 7B live Gemini Reconstruction Director complete
 2026-08-13 06:45 PKT — Module 7C provenance and grounding validation complete
 2026-08-13 06:58 PKT — Module 7 Reconstruction Engine persistence and simulation API complete
+2026-08-13 08:33 PKT — Module 8A deterministic React Three Fiber simulation runtime complete
 
 Only record meaningful milestones such as:
 - repository creation
@@ -151,7 +153,7 @@ Never fabricate timestamps or completed milestones.
 
 ## Next Task
 
-Module 8 — Deterministic 3D Simulation Viewer
+Module 8B — Entity actions, events and deterministic procedural animation
 
 ---
 
